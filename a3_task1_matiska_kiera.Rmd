@@ -7,6 +7,66 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+# attach packages
+library(tidyverse)
+library(here)
+library(janitor)
+library(ggfortify)
+library(patchwork)
+library(plotly)
 ```
+
+## Read in Data
+
+```{r}
+usda_nutrients <- read_csv(here("data", "usda_nutrients.csv"))
+```
+
+### Clean names, make a subset, and remove NA values
+
+```{r}
+nutrients_clean <- usda_nutrients %>% 
+  clean_names()
+
+nutrients_sub <- nutrients_clean %>% 
+  select(id:descrip, energy_kcal:zinc_usrda) %>% 
+  drop_na()
+```
+
+## PCA Analysis
+
+```{r}
+nutrients_pca <- nutrients_sub %>% 
+  select(energy_kcal:vit_e_mg) %>% 
+  scale() %>% 
+  prcomp()
+
+nutrients_pca$rotation
+nutrients_pca$sdev
+```
+
+### Create a biplot
+
+```{r}
+autoplot(nutrients_pca,
+         data = nutrients_sub,
+         loadings = TRUE,
+         colour = "food_group",
+         loadings.label = TRUE,
+         loadings.colour = "black",
+         loadings.label.colour = "black",
+         hide_legend = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
 
 
