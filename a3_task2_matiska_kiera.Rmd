@@ -1,0 +1,50 @@
+---
+title: "Untitled"
+author: "Kiera Matiska"
+date: "2/15/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# attach packages
+library(tidyverse)
+library(here)
+library(NbClust)
+library(cluster)
+library(factoextra)
+library(dendextend)
+library(ggdendro)
+```
+
+## Read in data
+
+```{r}
+stream_chem_na <- read_csv(here("data", "sbc_lter_registered_stream_chemistry.csv")) %>% 
+  replace(stream_chem == -999.0, NA)
+
+stream_chem <- stream_chem %>% 
+  drop_na()
+```
+
+## Part 1: k-means clustering
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
