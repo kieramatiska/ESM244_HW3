@@ -5,6 +5,10 @@ date: "2/12/2022"
 output: html_document
 ---
 
+## Overview:
+
+This code explores the 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
