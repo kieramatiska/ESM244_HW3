@@ -22,24 +22,49 @@ library(ggdendro)
 
 ```{r}
 stream_chem_na <- read_csv(here("data", "sbc_lter_registered_stream_chemistry.csv")) %>% 
-  replace(stream_chem == -999.0, NA)
+  replace(stream_chem_na == -999.0, NA)
 
-stream_chem <- stream_chem %>% 
+stream_chem <- stream_chem_na %>% 
   drop_na()
 ```
 
 ## Part 1: k-means clustering
 
-```{r}
+### Create a subset with all the variable by site
 
+```{r}
+stream_chem_site <- stream_chem %>% 
+  group_by(site_code) %>% 
+  summarize(mean_nh4_uM = mean(nh4_uM),
+            mean_no3_uM = mean(no3_uM),
+            mean_po4_uM = mean(po4_uM),
+            mean_tdn_uM = mean(tdn_uM),
+            mean_tdp_uM = mean(tdp_uM),
+            mean_tpc_uM = mean(tpc_uM),
+            mean_tpn_uM = mean(tpn_uM),
+            mean_tpp_uM = mean(tpp_uM),
+            mean_tss_mgperLiter = mean(tss_mgperLiter),
+            mean_spec_cond_uSpercm = mean(spec_cond_uSpercm))
+
+summary(stream_chem_site)
 ```
 
+### Scale subset by site
 
+```{r}
+stream_site_scale <- stream_chem_site %>% 
+  select(ends_with(c("_uM", "_mgperLiter", "_uSpercm"))) %>% 
+  scale()
 
+summary(stream_site_scale)
+```
 
+### Determine amount of clusters to use
 
-
-
+```{r}
+number_est <- NbClust(stream_site_scale, min.nc =  2, max.nc = 15,
+                      method = "kmeans") # tells us in words how many clusters to use
+```
 
 
 
