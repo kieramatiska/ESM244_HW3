@@ -28,7 +28,7 @@ stream_chem <- stream_chem_na %>%
   drop_na()
 ```
 
-## Part 1: k-means clustering
+## Part 1: Create a subset and scale the data
 
 ### Create a subset with all the variable by site
 
@@ -59,12 +59,16 @@ stream_site_scale <- stream_chem_site %>%
 summary(stream_site_scale)
 ```
 
-### Determine amount of clusters to use
+## Part 2: Start the Hierarchical Cluster Analysis
 
 ```{r}
-number_est <- NbClust(stream_site_scale, min.nc =  2, max.nc = 15,
-                      method = "kmeans") # tells us in words how many clusters to use
+stream_dist <- dist(stream_site_scale, method = "euclidean")
+
+stream_hc_complete <- hclust(stream_dist, method = "ward.D")
+
+plot(stream_hc_complete, cex = 0.6, hang = -1)
 ```
+
 
 
 

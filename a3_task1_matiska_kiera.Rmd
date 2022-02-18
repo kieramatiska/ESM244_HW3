@@ -53,7 +53,7 @@ nutrients_pca$sdev
 ### Create a biplot
 
 ```{r}
-autoplot(nutrients_pca,
+x <- autoplot(nutrients_pca,
          data = nutrients_sub,
          loadings = TRUE,
          colour = "food_group",
@@ -61,6 +61,8 @@ autoplot(nutrients_pca,
          loadings.colour = "black",
          loadings.label.colour = "black",
          hide_legend = TRUE)
+
+ggplotly(x)
 ```
 
 
