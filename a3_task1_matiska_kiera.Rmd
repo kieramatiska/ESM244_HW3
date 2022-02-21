@@ -64,7 +64,7 @@ x <- autoplot(env_vars_pca, # plot pca data set
 ggplotly(x) # plot the pca graph with plotly
 ```
 
-**Figure 1.** Principle Component Analysis. This biplot is comparing different variables to see how related they are to each other. Crop-land cover is negatively correlated with isothermality and cropland cover and mean annual rain are not correlated. Due to the small angle between mean annual rain and tree canopy cover, it can be concluded that these two variables are strongly correlated. The short line length for elevation indicates that it is intersecting in a different dimension of the graph. Points indicate each observation and is colored by country.
+**Figure 1.** Principle Component Analysis. This biplot is comparing different variables to see how related they are to each other. Crop-land cover is negatively correlated with isothermality and cropland cover and mean annual rain are not correlated. Due to the small angle between mean annual rain and tree canopy cover, it can be concluded that these two variables are positively correlated. The short line length for elevation indicates that it is intersecting in a different dimension of the graph. Points indicate each observation and is colored by country.
 
 ## Screenplot
 
