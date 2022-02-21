@@ -1,16 +1,22 @@
 ---
-title: "Task 1"
+title: "Principle Components Analysis: Environmental World Variables"
 author: "Kiera Matiska"
 date: "2/12/2022"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ## Overview:
 
-This code explores the 
+This code explores the variables inside an Environmental World dataset using principle components analysis (PCA) and screenplot. The data was compiled from Google Earth Engine and put in a nice data set format for easy manipulation. In this code, variables relating to temperature, rain, elevation, land cover type, cloudiness, and windiness will be assessed to determine correlations between the variables. 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+#### Citations:
+
+
+
+```{r setup, include=TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 # attach packages
 library(tidyverse)
@@ -19,60 +25,85 @@ library(janitor)
 library(ggfortify)
 library(patchwork)
 library(plotly)
+library(beepr)
 ```
 
-## Read in Data
-
 ```{r}
-usda_nutrients <- read_csv(here("data", "usda_nutrients.csv"))
+world_env_vars <- read_csv(here("data", "world_env_vars.csv")) %>% # read in data
+  filter(Country != "Antarctica") %>% # remove the country Antartica as it only contains NA values
+  clean_names() %>% # convert column headers to lower snake case
+  drop_na() # drop any remaining NA values
 ```
 
-### Clean names, make a subset, and remove NA values
 
 ```{r}
-nutrients_clean <- usda_nutrients %>% 
-  clean_names()
-
-nutrients_sub <- nutrients_clean %>% 
-  select(id:descrip, energy_kcal:zinc_usrda) %>% 
-  drop_na()
-```
-
-## PCA Analysis
-
-```{r}
-nutrients_pca <- nutrients_sub %>% 
-  select(energy_kcal:vit_e_mg) %>% 
+# PCA Analysis
+env_vars_pca <- world_env_vars %>% # define PCA subset
+  select(elevation, cropland_cover:isothermality, rain_mean_annual, temp_mean_annual, wind, cloudiness) %>% # include these variables only
   scale() %>% 
   prcomp()
 
-nutrients_pca$rotation
-nutrients_pca$sdev
+env_vars_pca$rotation
+env_vars_pca$sdev
 ```
 
-### Create a biplot
+### Principle Components Analysis
 
 ```{r}
-x <- autoplot(nutrients_pca,
-         data = nutrients_sub,
+# Create a principle component plot
+x <- autoplot(env_vars_pca, # plot pca data set
+         data = world_env_vars, # use original data set
          loadings = TRUE,
-         colour = "food_group",
+         repel = TRUE,
+         colour = "country", # color points by country
          loadings.label = TRUE,
-         loadings.colour = "black",
-         loadings.label.colour = "black",
+         loadings.colour = "black", # color lines as black
+         loadings.label.colour = "black", # color labels as black
          hide_legend = TRUE)
 
-ggplotly(x)
+ggplotly(x) # plot the pca graph with plotly
 ```
 
+**Figure 1.** Principle Component Analysis. This biplot is comparing different variables to see how related they are to each other. Crop-land cover is negatively correlated with isothermality and cropland cover and mean annual rain are not correlated. Due to the small angle between mean annual rain and tree canopy cover, it can be concluded that these two variables are strongly correlated. The short line length for elevation indicates that it is intersecting in a different dimension of the graph. Points indicate each observation and is colored by country.
 
+## Screenplot
 
+```{r}
+sd_vec <- env_vars_pca$sdev
+var_vec <- sd_vec ^ 2
 
+pc_names <- colnames(env_vars_pca$rotation)
+pct_expl_df <- data.frame(v = var_vec, # create the data and variables to be plotted in screenplot
+                          pct_v = var_vec / sum(var_vec),
+                          pc = fct_inorder(pc_names)) %>% 
+  mutate(pct_lbl = paste0(round(pct_v * 100, 1), "%"))
 
+ggplot(pct_expl_df,
+       aes(x = pc, y = v)) +
+  geom_col(aes(fill = pc)) + # fill color by pc variable made above
+  geom_text(aes(label = pct_lbl), vjust = 0, nudge_y = 0.005) +
+  scale_fill_manual(values = c("PC1" = "darkolivegreen", # manually recolor all of the PCA columns
+                               "PC2" = "darkolivegreen4",
+                               "PC3" = "olivedrab",
+                               "PC4" = "olivedrab3",
+                               "PC5" = "yellowgreen",
+                               "PC6" = "darkolivegreen3",
+                               "PC7" = "darkolivegreen2",
+                               "PC8" = "olivedrab2")) +
+  labs(x = "Principle Component", # add x-axis label
+       y = "Variance Explained", # add y-axis label
+       fill = "Principle Component") + # label legend
+  theme_minimal() # change theme
+```
 
+**Figure 2.** Screenplot of the different principle component variables. The first 4 principle components explain 89.8% of the variance, showing that it is reasonable to drop the other four principle component variables.
 
+## Summary
 
+From this analysis, we have discovered that:
 
-
-
+- there are strong positive correlations between the variable mean annual rainfall, tree canopy cover, and cloudiness; elevation and cropland cover; isothermality and mean annual temperature.
+- there are strong negative correlations between wind and mean average rainfall; wind and tree canopy cover, mean annual temperature and cropland cover; isothermality and cropland cover; elevation and isothermality; and elevation and average annual temperature.
+- there is no correlation between cropland cover and wind; cropland cover and mean annual rainfall; mean annual temperature and mean annual rainfall; mean annual temperature and wind; and elevation and tree canopy cover.
+- Only four of the principle components are important for the relationship between these variables.
 
