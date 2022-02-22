@@ -11,9 +11,9 @@ output:
 
 This code explores the variables inside an Environmental World dataset using principle components analysis (PCA) and screenplot. The data was compiled from Google Earth Engine and put in a nice data set format for easy manipulation. In this code, variables relating to temperature, rain, elevation, land cover type, cloudiness, and windiness will be assessed to determine correlations between the variables. 
 
-#### Citations:
+#### Citation:
 
-
+Venter, Zander. *Miscellaneous environmental and climatic variables.* Variable inofrmation obtained from the Google Earth Engine and data is provided on Kaggle. https://www.kaggle.com/zanderventer/environmental-variables-for-world-countries
 
 ```{r setup, include=TRUE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -43,8 +43,8 @@ env_vars_pca <- world_env_vars %>% # define PCA subset
   scale() %>% 
   prcomp()
 
-env_vars_pca$rotation
-env_vars_pca$sdev
+# env_vars_pca$rotation
+# env_vars_pca$sdev
 ```
 
 ### Principle Components Analysis
