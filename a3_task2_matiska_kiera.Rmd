@@ -1,5 +1,5 @@
 ---
-title: "Dendogram Analysis: Streamwater Chemistry"
+title: "Dendrogram Analysis: Streamwater Chemistry"
 author: "Kiera Matiska"
 date: "2/15/2022"
 output: 
@@ -9,7 +9,7 @@ output:
 
 ## Overview:
 
-This code will analyze stream chemistry data and create a dendogram for relationships between different sites. The data includes different chemistry metrics, such as ammonium concentrations (uM), nitrate concentrations (uM), phosphate concentrations (uM), total dissolved nitrogen (uM), total dissolved phosphorus (uM), total particulate carbon (uM), total particulate nitrogen (uM), total particulate phosphorous (uM), total suspended solids (mg/L), and specific conductivity (uS/cm). The data set contains 12 sites and 6 of those sites are analyzed in this coding program.
+This code will analyze stream chemistry data and create a dendrogram for relationships between different sites. The data includes different chemistry metrics, such as ammonium concentrations (uM), nitrate concentrations (uM), phosphate concentrations (uM), total dissolved nitrogen (uM), total dissolved phosphorus (uM), total particulate carbon (uM), total particulate nitrogen (uM), total particulate phosphorous (uM), total suspended solids (mg/L), and specific conductivity (uS/cm). The data set contains 12 sites and 6 of those sites are analyzed in this coding program.
 
 #### Citation:
 
@@ -63,14 +63,18 @@ stream_site_scale <- stream_chem_site %>%
 # summary(stream_site_scale)
 ```
 
-## Heirarchical Clustering Analysis
+## Heirarchical Clustering Analysis: Dendrogram
 
 ```{r}
 stream_dist <- dist(stream_site_scale, method = "euclidean") 
 
-stream_hc_complete <- hclust(stream_dist, method = "complete") # creat logical clusters
+stream_hc_complete <- hclust(stream_dist, method = "complete") # create logical clusters
 
-plot(stream_hc_complete, cex = 0.6, hang = -1) # plot dendogram
+stream_hc_complete$labels <- c("AB00", "GV01", "MC00", "MC06", "ON02", "RG01") # changed site names
+
+ggdendrogram(stream_hc_complete, rotate = TRUE) + # defined dendrogram
+  theme_minimal() + # changed theme
+  labs(x = "Site", y = "Height") # changes axis label
 ```
 
 **Figure 1.** Dendogram of site relationships. From this dendogram, it can be concluded that sites pair 2 and 5 and pair 3 and 4 are the most related to each other.From pair 3 and 4, branches containing site 6 and 1 indicate lesser relationships and the final branch indicating pair site 2 and 5 are the least related to the other sites.
